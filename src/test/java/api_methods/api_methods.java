@@ -23,12 +23,27 @@ public class api_methods {
      * @param bodyRequest Body that is sent in the request
      * @return Service execution response
      */
-    public static Response postMethod(String endpoint, String bodyRequest) {
+    public static Response postMethod(String endpoint, Object bodyRequest) {
         RestAssured.baseURI = endpoint;
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(bodyRequest)
                 .post();
+    }
+
+    /**
+     * Execute a Put method Rest service for update information
+     *
+     * @param endpoint    Service Url
+     * @param bodyRequest Body that is sent in the request
+     * @return Service execution response
+     */
+    public static Response putMethod(String endpoint, String idUser, String bodyRequest) {
+        RestAssured.baseURI = endpoint;
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(bodyRequest)
+                .put();
     }
 
 }

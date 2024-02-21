@@ -8,6 +8,7 @@ public class AssertionManager {
 
     private final ExtentTest extentTest;
     private final SoftAssertions softAssertions;
+    private static final String MESSAGE_FAIL_HARD_ASSERTION = "The condition to be compared was not matched";
 
     /**
      * @param extentTest
@@ -19,15 +20,23 @@ public class AssertionManager {
 
     /**
      * @param condition
-     * @param message
      */
-    public void hardAssertTrue(boolean condition, String message) {
+    public void hardAssertTrue(boolean condition) {
         try {
             Assertions.assertThat(condition)
-                    .as(message)
+                    .as(MESSAGE_FAIL_HARD_ASSERTION)
                     .isTrue();
         } catch (AssertionError error) {
-            extentTest.fail(message + "- Failed: " + error.getMessage());
+            extentTest.fail(MESSAGE_FAIL_HARD_ASSERTION + "- Failed: " + error.getMessage());
+        }
+    }
+    public void hardAssertEquals(Object condition, Object expected) {
+        try {
+            Assertions.assertThat(condition)
+                    .as(MESSAGE_FAIL_HARD_ASSERTION)
+                    .isEqualTo(expected);
+        } catch (AssertionError error) {
+            extentTest.fail(MESSAGE_FAIL_HARD_ASSERTION + "- Failed: " + error.getMessage());
         }
     }
 

@@ -1,6 +1,7 @@
 target
 .idea
 build
+reports
 *.iws
 *.iml
 *.ipr
