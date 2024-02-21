@@ -11,7 +11,9 @@ public class AssertionManager {
     private static final String MESSAGE_FAIL_HARD_ASSERTION = "The condition to be compared was not matched";
 
     /**
-     * @param extentTest
+     * Construction method
+     *
+     * @param extentTest Parameter for configuring and sending messages to the report during assertion
      */
     public AssertionManager(ExtentTest extentTest) {
         this.extentTest = extentTest;
@@ -19,7 +21,9 @@ public class AssertionManager {
     }
 
     /**
-     * @param condition
+     * Method that performs a hard assertion of type true
+     *
+     * @param condition Condition to be evaluated
      */
     public void hardAssertTrue(boolean condition) {
         try {
@@ -30,6 +34,13 @@ public class AssertionManager {
             extentTest.fail(MESSAGE_FAIL_HARD_ASSERTION + "- Failed: " + error.getMessage());
         }
     }
+
+    /**
+     * Method that performs a hard assertion of type equals
+     *
+     * @param condition Condition to be evaluated
+     * @param expected  Expected value at which the condition is evaluated
+     */
     public void hardAssertEquals(Object condition, Object expected) {
         try {
             Assertions.assertThat(condition)
@@ -41,18 +52,19 @@ public class AssertionManager {
     }
 
     /**
-     * @param condition
-     * @param message
+     * Method that performs a Soft assertion of type equals
+     *
+     * @param condition Condition to be evaluated
      */
-    public void softAssertTrue(boolean condition, String message) {
+    public void softAssertTrue(boolean condition) {
 
         softAssertions.assertThat(condition)
-                .as(message)
+                .as(MESSAGE_FAIL_HARD_ASSERTION)
                 .isTrue();
     }
 
     /**
-     *
+     * Method where all Soft assertions that failed are administered.
      */
     public void assertAllSoftAssertions() {
 

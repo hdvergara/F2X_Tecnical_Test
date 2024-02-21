@@ -2,18 +2,16 @@ package tests;
 
 import api_methods.api_methods;
 import com.aventstack.extentreports.ExtentTest;
-import com.github.javafaker.Faker;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import utilities.AssertionManager;
+import utilities.ConfigProperties;
+import utilities.DataGenerator;
 import utilities.ReportManager;
 
 import java.util.HashMap;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class webServiceTest {
 
     @BeforeAll
@@ -26,19 +24,19 @@ public class webServiceTest {
         ReportManager.flushReport();
     }
 
-    private static final String END_POINT = "https://reqres.in/api/";
-    private static final String PATH_USER = "users";
-    private static final String SEARCH_SINGLE_USER = "users?id=5";
 
     /**
-     *
+     * Search for a specific user by ID
      */
     @Test
+    @Order(1)
     void searchSingleUserTest() {
         ExtentTest extentTest = ReportManager.createTest("Validate simple user search");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         extentTest.info("Test initialized");
-        Response response = api_methods.getMethod(END_POINT, SEARCH_SINGLE_USER);
+        Response response = api_methods.getMethod(
+                ConfigProperties.getProperty("Url.EndPoint"),
+                ConfigProperties.getProperty("Search.SingleUser"));
         extentTest.info("Executed service");
         assertionManager.hardAssertEquals(response.getStatusCode(), 200);
         assertionManager.hardAssertTrue("Charles".equals(response.getBody().jsonPath().get("data.first_name")));
@@ -47,42 +45,76 @@ public class webServiceTest {
         extentTest.info("Test completed");
     }
 
+    /**
+     * Create a new user
+     */
     @Test
+    @Order(2)
     void createUserTest() {
         ExtentTest extentTest = ReportManager.createTest("Validate user creation");
         AssertionManager assertionManager = new AssertionManager(extentTest);
-        Faker faker = new Faker();
-        String nameUser = faker.name().firstName();
+        String nameUser = DataGenerator.randomName();
         extentTest.info("Test initialized");
         extentTest.info("Preparing body JSON");
         HashMap<Object, Object> data = new HashMap<>();
-        data.put("name",nameUser);
-        data.put("job",faker.job().position());
+        data.put("name", nameUser);
+        data.put("job", DataGenerator.randomJob());
         extentTest.info("Json ready: " + data);
-        Response response = api_methods.postMethod(END_POINT + PATH_USER, data);
+        Response response = api_methods.postMethod(
+                ConfigProperties.getProperty("Url.EndPoint")
+                        + ConfigProperties.getProperty("Path.User"), data);
         extentTest.info("Executed service");
         assertionManager.hardAssertEquals(response.getStatusCode(), 201);
-        assertionManager.hardAssertTrue(nameUser.equals(response.getBody().jsonPath().get("name")));
+        extentTest.info("Service response: \n" + response.getBody().prettyPrint());
+        assertionManager.softAssertTrue(nameUser.equals(response.getBody().jsonPath().get("name")));
+        assertionManager.assertAllSoftAssertions();
         extentTest.info("Test completed");
     }
 
+    /**
+     * Update a user by searching for his ID
+     */
     @Test
+    @Order(3)
     void updateUserTest() {
         ExtentTest extentTest = ReportManager.createTest("Validate user update");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         extentTest.info("Test initialized");
         extentTest.info("Preparing body JSON");
-        Faker faker = new Faker();
-        String nameUser = faker.name().firstName();
-        extentTest.info("Preparing body JSON");
         HashMap<Object, Object> data = new HashMap<>();
-        data.put("name",nameUser);
-        data.put("job",faker.job().position());
+        String nameUser = DataGenerator.randomName();
+        data.put("name", nameUser);
+        data.put("job", DataGenerator.randomJob());
         extentTest.info("Json ready: " + data);
-        /*Response response = api_methods.putMethod(END_POINT + PATH_USER + "/", "2", jsonOutput);
+        Response response = api_methods.putMethod(
+                ConfigProperties.getProperty("Url.EndPoint")
+                        + ConfigProperties.getProperty("Path.User"), "/2", data);
         extentTest.info("Executed service");
         assertionManager.hardAssertEquals(response.getStatusCode(), 200);
-        extentTest.info("Test completed");*/
+        extentTest.info("Service response: \n" + response.getBody().prettyPrint());
+        assertionManager.softAssertTrue(nameUser.equals(response.getBody().jsonPath().get("name")));
+        extentTest.info("Test completed");
     }
 
+    /**
+     * Login to the service
+     */
+    @Test
+    @Order(4)
+    void loginUserTest() {
+        ExtentTest extentTest = ReportManager.createTest("Validate user update");
+        AssertionManager assertionManager = new AssertionManager(extentTest);
+        extentTest.info("Test initialized");
+        HashMap<Object, Object> data = new HashMap<>();
+        data.put("email", ConfigProperties.getProperty("email"));
+        data.put("password", ConfigProperties.getProperty("password"));
+        Response response = api_methods.postMethod(
+                ConfigProperties.getProperty("Url.EndPoint")
+                        + ConfigProperties.getProperty("Path.Login"), data);
+        extentTest.info("Executed service");
+        assertionManager.hardAssertEquals(response.getStatusCode(), 200);
+        extentTest.info("Service response: \n" + response.getBody().prettyPrint());
+        assertionManager.softAssertTrue(response.getBody().jsonPath().get("token") != "");
+        extentTest.info("Test completed");
+    }
 }

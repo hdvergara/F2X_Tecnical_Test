@@ -38,12 +38,12 @@ public class api_methods {
      * @param bodyRequest Body that is sent in the request
      * @return Service execution response
      */
-    public static Response putMethod(String endpoint, String idUser, String bodyRequest) {
+    public static Response putMethod(String endpoint, String idUser, Object bodyRequest) {
         RestAssured.baseURI = endpoint;
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(bodyRequest)
-                .put();
+                .put(idUser);
     }
 
 }
