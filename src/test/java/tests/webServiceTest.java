@@ -31,7 +31,7 @@ public class webServiceTest {
     @Test
     @Order(1)
     void searchSingleUserTest() {
-        ExtentTest extentTest = ReportManager.createTest("Validate simple user search");
+        ExtentTest extentTest = ReportManager.createTest("VALIDATE SEARCH USER BY ID");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         extentTest.info("Test initialized");
         Response response = api_methods.getMethod(
@@ -51,7 +51,7 @@ public class webServiceTest {
     @Test
     @Order(2)
     void createUserTest() {
-        ExtentTest extentTest = ReportManager.createTest("Validate user creation");
+        ExtentTest extentTest = ReportManager.createTest("VALIDATE USER CREATION");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         String nameUser = DataGenerator.randomName();
         extentTest.info("Test initialized");
@@ -77,7 +77,7 @@ public class webServiceTest {
     @Test
     @Order(3)
     void updateUserTest() {
-        ExtentTest extentTest = ReportManager.createTest("Validate user update");
+        ExtentTest extentTest = ReportManager.createTest("VALIDATE USER UPDATE");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         extentTest.info("Test initialized");
         extentTest.info("Preparing body JSON");
@@ -102,7 +102,7 @@ public class webServiceTest {
     @Test
     @Order(4)
     void loginUserTest() {
-        ExtentTest extentTest = ReportManager.createTest("Validate user update");
+        ExtentTest extentTest = ReportManager.createTest("VALIDATE LOGIN");
         AssertionManager assertionManager = new AssertionManager(extentTest);
         extentTest.info("Test initialized");
         HashMap<Object, Object> data = new HashMap<>();
